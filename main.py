@@ -3,8 +3,8 @@ from extractors.pdf_loader import PDFLoader
 from extractors.docx_loader import DOCXLoader
 from extractors.ppt_loader import PPTLoader
 from data_extractors.data_extractor import DataExtractor
-from storages.file_storage import FileStorage
-from storages.sql_storage import SQLStorage
+from storages.file_storage import FileStorage_pdf, FileStorage_docx, FileStorage_ppt
+from storages.sql_storage import SQLStorage_pdf, SQLStorage_docx, SQLStorage_ppt
 
 def main():
     # Specify the path to your test files
@@ -30,9 +30,28 @@ def main():
         print("PDF Text:", pdf_text)
         print("PDF Metadata:", pdf_metadata)
 
+
+        # Extract and print links, tables and images from PDF
+        links_pdf = pdf_extractor.extract_links(test_files['pdf'])
+        images_pdf = pdf_extractor.extract_images(test_files['pdf'])
+        tables_pdf = pdf_extractor.extract_tables(test_files['pdf'])
+        print("PDF Links:", links_pdf)
+        print("PDF Images:", images_pdf)
+        print("PDF Tables:", tables_pdf)
+
         # Example of storing the extracted PDF text
-        file_storage = FileStorage()
+        file_storage = FileStorage_pdf()
         file_storage.store(pdf_text)  # Store PDF text to CSV
+        file_storage.store(pdf_metadata)
+        file_storage.store(links_pdf)
+        file_storage.store(images_pdf)
+        file_storage.store(tables_pdf)
+
+        # Example of storing the extracted DOCX text
+        sql_storage = SQLStorage_pdf()
+        sql_storage.store(pdf_text)  # Store DOCX text in SQL database
+        sql_storage.store(pdf_metadata)
+        sql_storage.store(links_pdf)
 
     # Extract and print text from DOCX
     if os.path.exists(test_files['docx']):
@@ -40,9 +59,28 @@ def main():
         print("DOCX Text:", docx_text)
         print("DOCX Metadata:", docx_metadata)
 
+        
+        # Extract and print images, tables and links from DOCX
+        links_docx = docx_extractor.extract_links(test_files['docx'])
+        images_docx = docx_extractor.extract_images(test_files['docx'])
+        tables_docx = docx_extractor.extract_tables(test_files['docx'])
+        print("DOCX Links:", links_docx)
+        print("DOCX Images:", images_docx)
+        print("DOCX Tables:", tables_docx)
+
         # Example of storing the extracted DOCX text
-        sql_storage = SQLStorage()
+        sql_storage = SQLStorage_docx()
         sql_storage.store(docx_text)  # Store DOCX text in SQL database
+        sql_storage.store(docx_metadata)
+        sql_storage.store(links_docx)
+
+
+        file_storage = FileStorage_docx()
+        file_storage.store(docx_text)  # Store PDF text to CSV
+        file_storage.store(docx_metadata)
+        file_storage.store(links_docx)
+        file_storage.store(images_docx)
+        file_storage.store(tables_docx)
 
     # Extract and print text from PPT
     if os.path.exists(test_files['ppt']):
@@ -50,19 +88,27 @@ def main():
         print("PPT Text:", ppt_text)
         print("PPT Metadata:", ppt_metadata)
 
-        # Example of storing the extracted PPT text
-        file_storage.store(ppt_text)  # Store PPT text to CSV
+        
+        # Extract and print links and images from PPT
+        links_ppt = ppt_extractor.extract_links(test_files['ppt'])
+        images_ppt = ppt_extractor.extract_images(test_files['ppt'])
+        tables_ppt = ppt_extractor.extract_tables(test_files['ppt'])
+        print("PPT Links:", links_ppt)
+        print("PPT Images:", images_ppt)
+        print("PPT Tables:", tables_ppt)
 
-    # Extract links, images, and tables if implemented
-    # Note: Implement these methods in DataExtractor for actual use
-    # links_pdf = pdf_extractor.extract_links(test_files['pdf'])
-    # images_pdf = pdf_extractor.extract_images(test_files['pdf'])
-    # tables_docx = docx_extractor.extract_tables(test_files['docx'])
-    
-    # Print the extracted links, images, and tables
-    # print("PDF Links:", links_pdf)
-    # print("PDF Images:", images_pdf)
-    # print("DOCX Tables:", tables_docx)
+        file_storage = FileStorage_ppt()
+        file_storage.store(ppt_text)  
+        file_storage.store(ppt_metadata)
+        file_storage.store(links_ppt)
+        file_storage.store(images_ppt)
+        file_storage.store(tables_ppt)
+
+        sql_storage = SQLStorage_ppt()
+        sql_storage.store(ppt_text)  # Store ppt text in SQL database
+        sql_storage.store(ppt_metadata)
+        sql_storage.store(links_ppt)
+
 
 if __name__ == "__main__":
     main()
